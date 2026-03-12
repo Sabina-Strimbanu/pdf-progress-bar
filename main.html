@@ -1,14 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.min.mjs"></script>
-</head>
 
 <body>
+<!-- load the PDF.js library -->
+<script src="//mozilla.github.io/pdf.js/build/pdf.mjs" type="module"></script>
 
-    <div id="pdf-container">
-        
-    </div>
+<script type="module">
+   // name of the PDF file
+  var url = 'ccc_contract.pdf';
+
+  // get the PDF.js library from the browser
+  const book = globalThis.pdfjsLib;
+
+  // tell PDF.js where the worker file is
+  book.GlobalWorkerOptions.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.mjs';
+
+  // start loading the PDF
+  var loadingTask = book.getDocument(url);
+
+  // run this when the PDF is ready
+  loadingTask.promise.then(function(pdf) {
+    console.log('PDF loaded');
+
+    // choose which page to show
+    var pageNumber = 1;
+
+    // get that page
+    pdf.getPage(pageNumber).then(function(page) {
+      console.log('Page loaded');
+
+      var scale = 1.5; // zoom level
+      var viewport = page.getViewport({scale: scale}); // calculate page size
+
+      // Prepare canvas using PDF page dimensions
+      var canvas = document.getElementById('the-canvas');
+      var context = canvas.getContext('2d');
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+
+      // Render PDF page into canvas context
+      var renderContext = {
+        canvasContext: context,
+        viewport: viewport
+      };
+      var renderTask = page.render(renderContext); // draw the page
+      // run when drawing is finished
+      renderTask.promise.then(function () {
+        console.log('Page rendered');
+      });
+    });
+  }, function (reason) {
+    // PDF loading error
+    console.error(reason);
+  });
+</script>
+
+<p>It works</p>
+<canvas id="the-canvas"></canvas> <!-- area where the PDF page will appear -->
+
+    
 </body>
 </html>
