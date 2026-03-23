@@ -1,0 +1,128 @@
+<!-- <!DOCTYPE html> -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReadTrack — PDF Progress Tracker</title>
+
+  <!-- PDF.js from CDN — this is Mozilla's official library for reading PDFs in the browser -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============================================================
+       UPLOAD SCREEN — shown before a PDF is loaded
+  ============================================================ -->
+  <div id="upload-screen" class="screen active">
+    <div class="upload-card">
+      <div class="logo">ReadTrack</div>
+      <p class="tagline">Set a reading goal. Watch your progress.</p>
+
+      <label class="drop-zone" id="drop-zone">
+        <div class="drop-icon">📄</div>
+        <div class="drop-text">Drop your PDF here<br/><span>or click to browse</span></div>
+        <!-- The actual file input — hidden, triggered by clicking the label -->
+        <input type="file" id="file-input" accept=".pdf" hidden />
+      </label>
+
+      <p id="upload-error" class="error-msg" hidden></p>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       GOAL SCREEN — shown after PDF is loaded, before tracking starts
+  ============================================================ -->
+  <div id="goal-screen" class="screen">
+    <div class="goal-card">
+      <div class="logo">ReadTrack</div>
+
+      <div class="book-info" id="book-info">
+        <span id="book-name">document.pdf</span>
+        <span id="total-pages-label">— pages</span>
+      </div>
+
+      <div class="goal-form">
+        <label class="field-label">I want to read up to page</label>
+        <input type="number" id="goal-input" class="page-input" min="1" placeholder="e.g. 50" />
+
+        <label class="field-label" style="margin-top:1rem;">Starting from page</label>
+        <input type="number" id="start-input" class="page-input" min="1" value="1" placeholder="e.g. 1" />
+
+        <p id="goal-error" class="error-msg" hidden></p>
+
+        <button id="start-btn" class="primary-btn">Start Tracking →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       TRACKER SCREEN — the main reading view
+  ============================================================ -->
+  <div id="tracker-screen" class="screen">
+
+    <!-- Sidebar: progress panel -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">ReadTrack</div>
+
+      <div class="progress-section">
+        <div class="progress-label">
+          <span>Progress</span>
+          <span id="percent-display">0%</span>
+        </div>
+
+        <!-- The progress bar -->
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+
+        <div class="page-counts">
+          <div class="count-block">
+            <span class="count-num" id="current-page-display">1</span>
+            <span class="count-lbl">current</span>
+          </div>
+          <div class="count-block">
+            <span class="count-num" id="goal-page-display">—</span>
+            <span class="count-lbl">goal</span>
+          </div>
+          <div class="count-block">
+            <span class="count-num" id="pages-left-display">—</span>
+            <span class="count-lbl">remaining</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation controls -->
+      <div class="nav-controls">
+        <button id="prev-btn" class="nav-btn" title="Previous page">‹</button>
+
+        <div class="page-jump">
+          <input type="number" id="jump-input" class="jump-input" min="1" title="Jump to page" />
+          <span class="jump-slash">/ <span id="total-display">?</span></span>
+        </div>
+
+        <button id="next-btn" class="nav-btn" title="Next page">›</button>
+      </div>
+
+      <div class="sidebar-footer">
+        <button id="reset-btn" class="reset-btn">↩ New book</button>
+      </div>
+    </aside>
+
+    <!-- Main content: PDF canvas -->
+    <main class="viewer-area">
+      <div id="loading-indicator" class="loading">Rendering page…</div>
+      <canvas id="pdf-canvas"></canvas>
+    </main>
+
+  </div>
+
+  <!-- Load our JS files in order: math first, then the PDF engine, then the app -->
+  <script src="progress.js"></script>
+  <script src="pdfEngine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
